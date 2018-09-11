@@ -12,7 +12,7 @@ class ThreadsController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth')->only('store'); // 白名单，意味着仅 store 方法需要登录
+        $this->middleware('auth')->except(['index', 'show']);
     }
 
     /**
@@ -34,7 +34,7 @@ class ThreadsController extends Controller
      */
     public function create()
     {
-        //
+        return view('threads.create');
     }
 
     /**
