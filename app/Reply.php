@@ -10,4 +10,9 @@ class Reply extends Model
      * @var array 所有属性均可更改, 后期调整.
      */
     protected $guarded = [];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
