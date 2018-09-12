@@ -212,6 +212,10 @@ class ThreadsTest extends TestCase
 
 ## 第三节 A Thread Can Have Replies
 
+### new kill
+
+- Carbon 的使用
+
 ### 功能测试可以先写伪代码
 
 ```php
@@ -252,12 +256,111 @@ public function a_user_can_read_replies_that_are_associated_with_a_thread()
 
 例如: 写完了功能测试, 现在正在写代码让这个功能测试通过, 这个时候, 会写若干个单独的小的方法, 那么, 每次在写小的方法之前, 应该先写这些小的方法的单元测试. 把这个单元测试通过了, 再写下一个小的方法的单元测试. 再通过. 最后, 所有的单元测试都实现了, 功能测试也就实现了. 
 
-### 新的知识
-
-* Carbon 的使用
 
 
+## 第三节 A User May Response To Threads
 
+### 设置登录用户
+
+```php
+// Given we have an authenticated user.
+$this->be($user = factory('App\User')->create());
+```
+
+查看源代码
+
+```php
+    /**
+     * Set the currently logged in user for the application.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  string|null  $driver
+     * @return void
+     */
+    public function be(UserContract $user, $driver = null)
+    {
+        $this->app['auth']->guard($driver)->setUser($user);
+
+        $this->app['auth']->shouldUse($driver);
+    }
+```
+
+可以看到, 这个是设置指定用户为当前的登录用户, 并且, 需要经过 auth 的步骤.
+
+
+
+还有一个设置为当前用户的方法, 与这个相似.
+
+可以看到, 这个是调用了上面的方法, 这 2 个的区别是返回值不同. 
+
+```php
+/**
+ * Set the currently logged in user for the application.
+ *
+ * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+ * @param  string|null  $driver
+ * @return $this
+ */
+public function actingAs(UserContract $user, $driver = null)
+{
+    $this->be($user, $driver);
+
+    return $this;
+}
+```
+
+
+
+### 测试模型关联的写法
+
+单元测试文件如下:
+
+*tests/Unit/ThreadTest.php*
+
+```php
+public function test_a_thread_has_a_creator()
+{
+    $this->assertInstanceOf('App\User',$this->thread->creator);
+}
+```
+
+模型文件如下:
+
+*app/Thread.php*
+
+```php
+public function creator()
+{
+    return $this->belongsTo(User::class,'user_id'); // 使用 user_id 字段进行模型关联
+}
+```
+
+### 获取当前登录的用户id
+
+```php
+auth()->id();
+```
+
+### 异常也要写测试
+
+例如: 用户没有登录就发表文章.
+
+写这种测试的目的, 是检验异常的处理方式是否和我们预期的一样.
+
+```php
+    /** @test */
+    public function unauthenticated_user_may_no_add_replies()
+    {
+        $this->expectException('Illuminate\Auth\AuthenticationException');
+
+        $thread = factory('App\Thread')->create();
+
+        $reply = factory('App\Reply')->create();
+        $this->post($thread->path().'/replies',$reply->toArray());
+    }
+```
+
+其中, `$this->expectException('Illuminate\Auth\AuthenticationException');` 指定了异常. **需要卸载测试方法的上面**.
 
 
 
