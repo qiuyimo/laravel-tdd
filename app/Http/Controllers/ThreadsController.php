@@ -18,15 +18,17 @@ class ThreadsController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
      * @param Channel $channel
      * @param ThreadsFilters $filters
-     * @return \Illuminate\Http\Response
+     * @return Thread|Thread[]|\Illuminate\Contracts\View\Factory|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\Illuminate\View\View
      */
     public function index(Channel $channel, ThreadsFilters $filters)
     {
         $threads = $this->getThreads($channel, $filters);
+
+        if (request()->wantsJson()) {
+            return $threads;
+        }
 
         return view('threads.index', compact('threads'));
     }
