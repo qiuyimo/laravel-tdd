@@ -362,5 +362,128 @@ auth()->id();
 
 其中, `$this->expectException('Illuminate\Auth\AuthenticationException');` 指定了异常. **需要写在测试方法的上面**.
 
+## 第五节 The Reply Form
 
+### blade 中使用 php
+
+```php
+@if (auth()->check())  // 已登录用户才可见
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <form method="post" action="{{ $thread->path() . '/replies' }}">
+                <div class="form-group">
+                    <textarea name="body" id="body" class="form-control" placeholder="说点什么吧..."rows="5"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-default">提交</button>
+            </form>
+        </div>
+    </div>
+@endif
+```
+
+其中 `auth()->check()`, 返回用户是否登录.
+
+## 第六节 A User Can Publish Threads
+
+### factory 的 make(), create(), raw()
+
+* `factory('App\Thread')->make()`
+* `factory('App\Thread')->create()`
+* `factory('App\Thread')->raw()`
+
+关于`create()`，`make()`，`raw()`三种方法的比较：
+
+- `create()`方法得到一个模型实例，并保存到数据库中；
+- `make()`方法得到一个模型实例（不保存）；
+- `raw()`方法是得到一个模型实例转化后的数组。
+
+## 第七节 Let's Make Some Testing Helpers
+
+
+
+## 第八节 The Exception Handling Conundrum
+
+### 测试中的异常处理
+
+根据 `鲍勃大叔` 的 3 条原则, 我们肯定会测试失败, 所以好的异常提示非常重要. 
+
+laravel 自己封装了许多的异常处理, 例如, 表单验证失败了会有异常处理, 用户认证失败了也会有封装好的异常处理. 这些都是不利于我们在命令行中查看的. 所以, 我们要设置一下. 可以关闭和开启 laravel 的异常处理.
+
+*tests\TestCase.php*
+
+```php
+<?php
+
+namespace Tests;
+
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use App\Exceptions\Handler;
+
+abstract class TestCase extends BaseTestCase
+{
+    use CreatesApplication;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->disableExceptionHandling();
+    }
+
+    protected function signIn($user = null)
+    {
+        $user = $user ?: create('App\User');
+
+        $this->actingAs($user);
+
+        return $this;
+    }
+
+    /**
+     * 关掉 laravel 自带的异常处理. 抛出异常.
+     */
+    protected function disableExceptionHandling()
+    {
+        $this->oldExceptionHander = $this->app->make(ExceptionHandler::class);
+
+        $this->app->instance(ExceptionHandler::class,new class extends Handler{
+           public function __construct(){}
+           public function report(\Exception $e){}
+           public function render($request,\Exception $e){
+               throw $e;
+           }
+        });
+    }
+	
+    /**
+     * 启动 laravel 自带的异常处理
+     */
+    protected function withExceptionHandling()
+    {
+        $this->app->instance(ExceptionHandler::class,$this->oldExceptionHandler);
+
+        return $this;
+    }
+}
+```
+
+这样, 我们在处理一些逻辑的时候, 就可以自己选择异常了. 
+
+例如:
+
+```php
+/** @test */
+public function guests_may_not_see_the_create_thread_page()
+{
+    $this->withExceptionHandling() // 此处调用
+        ->get('/threads/create')
+        ->assertRedirect('/login');
+}
+```
+
+开启 laravel 的异常处理. 如果用户没有登录, 调用创建文章的端点, 会跳转到登录页面. 
+
+而当我们想要调试的时候, 就可以关闭异常处理. 方便我们查看异常信息. 
 
