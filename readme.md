@@ -258,7 +258,7 @@ public function a_user_can_read_replies_that_are_associated_with_a_thread()
 
 
 
-## 第三节 A User May Response To Threads
+## 第四节 A User May Response To Threads
 
 ### 设置登录用户
 
@@ -360,7 +360,7 @@ auth()->id();
     }
 ```
 
-其中, `$this->expectException('Illuminate\Auth\AuthenticationException');` 指定了异常. **需要卸载测试方法的上面**.
+其中, `$this->expectException('Illuminate\Auth\AuthenticationException');` 指定了异常. **需要写在测试方法的上面**.
 
 
 
