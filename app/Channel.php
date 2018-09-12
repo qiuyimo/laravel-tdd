@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Channel whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Channel whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Thread[] $threads
  */
 class Channel extends Model
 {
