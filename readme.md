@@ -487,3 +487,88 @@ public function guests_may_not_see_the_create_thread_page()
 
 而当我们想要调试的时候, 就可以关闭异常处理. 方便我们查看异常信息. 
 
+## 第十节 How To Test Validation Errors
+
+### factory 的使用
+
+```php
+factory($class, $times)->create($attributes);
+```
+
+用法:
+
+* `$class` 是 model 的类名, 
+
+其中, 必须要先定义. 例如:
+
+*database/factories/UserFactory.php*
+
+```php
+<?php
+
+use Faker\Generator as Faker;
+
+/*
+|--------------------------------------------------------------------------
+| Model Factories
+|--------------------------------------------------------------------------
+|
+| This directory should contain each of the model factory definitions for
+| your application. Factories provide a convenient way to generate new
+| model instances for testing / seeding your application's database.
+|
+*/
+
+$factory->define(App\User::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
+        'email' => $faker->unique()->safeEmail,
+        'password' => bcrypt('123456'),
+        'remember_token' => str_random(10),
+    ];
+});
+
+$factory->define(App\Thread::class, function (Faker $faker) {
+    return [
+        'user_id' => function () {
+            return factory('App\User')->create()->id;
+        },
+        'channel_id' => function () {
+            return factory('App\Channel')->create()->id;
+        },
+        'title' => $faker->sentence,
+        'body' => $faker->paragraph,
+
+    ];
+});
+
+$factory->define(App\Reply::class, function (Faker $faker) {
+    return [
+        'thread_id' => function () {
+            return factory('App\Thread')->create()->id;
+        },
+        'user_id' => function () {
+            return factory('App\User')->create()->id;
+        },
+        'body' => $faker->paragraph,
+    ];
+});
+
+```
+
+这里定义了 `App\Reply` 的 `factory`, 在测试代码中, 才可以调用 `factory('App\Reply')->create();`
+
+* `$time` 是创建多少条数据,
+
+不写的话, 默认是 1 条.
+
+* $attributes 对应的 model 的数据
+
+如果在 factory 中定义了, 且 `$attributes` 中也定义了, 那么以 `$attributes` 的为准. 
+
+**利用以上提醒, 我们就可以用来测试表单验证失败的情况.**
+
+
+
+
+
