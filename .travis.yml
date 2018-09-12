@@ -9,6 +9,7 @@ env:
   - APP_DEBUG=false
 
 install:
+  - cp .env.travis .env
   - composer install --prefer-dist --quiet
   - php artisan key:generate
 
