@@ -12,18 +12,18 @@ class CreateThreadsTest extends TestCase
     /**
      * @test
      */
-    public function anAuthenticatedUserCanCreateNewForumThreads()
+    public function an_authenticated_user_can_create_new_forum_threads()
     {
         // Given we have a signed in user
-        $this->actingAs(factory('App\User')->create());  // 已登录用户
+        $this->signIn();  // 已登录用户
 
         // When we hit the endpoint to create a new thread
-        $thread = factory('App\Thread')->create();
-        $this->post('/threads', $thread->toArray());
+        $thread = factory('App\Thread')->make();
+        $response = $this->post('/threads', $thread->toArray());
 
         // Then, when we visit the thread
         // We should see the new thread
-        $this->get($thread->path())
+        $this->get($response->headers->get('Location'))
             ->assertSee($thread->title)
             ->assertSee($thread->body);
     }
@@ -43,5 +43,23 @@ class CreateThreadsTest extends TestCase
     public function guestsMayNotSeeTheCreateThreadPage()
     {
         $this->get('/threads/create')->assertRedirect('/login');
+    }
+
+    /** @test */
+    public function a_thread_requires_a_title_body_channel_id()
+    {
+        $this->signIn();
+
+        $thread = make('App\Thread', ['title' => null]);
+        $this->post('/threads', $thread->toArray())->assertSessionHasErrors('title');
+
+        $thread = make('App\Thread', ['body' => null]);
+        $this->post('/threads', $thread->toArray())->assertSessionHasErrors('body');
+
+        $thread = make('App\Thread', ['channel_id' => null]);
+        $this->post('/threads', $thread->toArray())->assertSessionHasErrors('channel_id');
+
+        $thread = make('App\Thread', ['channel_id' => 999]);
+        $this->post('/threads', $thread->toArray())->assertSessionHasErrors('channel_id');
     }
 }
