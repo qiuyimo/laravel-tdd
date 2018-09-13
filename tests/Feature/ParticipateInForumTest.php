@@ -31,21 +31,17 @@ class ParticipateInForumTest extends TestCase
     /**
      * @test
      */
-    public function unauthenticatedUserMayNoAddReplies()
+    public function unauthenticated_user_may_no_add_replies()
     {
-        // $this->expectException('Illuminate\Auth\AuthenticationException');
-
-        $thread = factory('App\Thread')->create();
-
-        $reply = factory('App\Reply')->create();
-
-        $this->post($thread->path() . '/replies', $reply->toArray())->assertStatus(302);
+        $this->withExceptionHandling()
+            ->post('threads/some-channel/1/replies',[])
+            ->assertRedirect('/login');
     }
 
     /** @test */
     public function a_reply_reqiures_a_body()
     {
-        $this->signIn();
+        $this->withExceptionHandling()->signIn();
 
         $thread = create('App\Thread');
         $reply = make('App\Reply',['body' => null]);

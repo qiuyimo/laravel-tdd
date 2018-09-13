@@ -34,7 +34,7 @@ class CreateThreadsTest extends TestCase
     public function guestsMayNotCreateThreads()
     {
         $thread = factory('App\Thread')->make();
-        $this->post('/threads', $thread->toArray())->assertStatus(302);
+        $this->withExceptionHandling()->post('/threads', $thread->toArray())->assertStatus(302);
     }
 
     /**
@@ -42,13 +42,13 @@ class CreateThreadsTest extends TestCase
      */
     public function guestsMayNotSeeTheCreateThreadPage()
     {
-        $this->get('/threads/create')->assertRedirect('/login');
+        $this->withExceptionHandling()->get('/threads/create')->assertRedirect('/login');
     }
 
     /** @test */
     public function a_thread_requires_a_title_body_channel_id()
     {
-        $this->signIn();
+        $this->withExceptionHandling()->signIn();
 
         $thread = make('App\Thread', ['title' => null]);
         $this->post('/threads', $thread->toArray())->assertSessionHasErrors('title');

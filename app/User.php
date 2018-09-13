@@ -46,4 +46,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder
+     */
+    public function threads()
+    {
+        return $this->hasMany(Thread::class)->latest();
+    }
 }

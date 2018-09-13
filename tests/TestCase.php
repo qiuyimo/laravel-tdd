@@ -10,6 +10,13 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->disableExceptionHandling();
+    }
+
     protected function signIn($user = null)
     {
         $user = $user ?: create('App\User');
@@ -21,7 +28,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function disableExceptionHandling()
     {
-        $this->oldExceptionHander = $this->app->make(ExceptionHandler::class);
+        $this->oldExceptionHandler = $this->app->make(ExceptionHandler::class);
 
         $this->app->instance(ExceptionHandler::class, new class extends Handler
         {
