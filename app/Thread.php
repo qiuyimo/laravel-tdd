@@ -29,22 +29,27 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Thread extends Model
 {
+    use RecordsActivity;
+
     /**
      * @var array 所有属性均可更新, 后期修复.
      */
     protected $guarded = [];
 
-    protected $with = ['creator'];
+    protected $with = ['creator', 'channel'];
 
     protected static function boot()
     {
         parent::boot();
 
+        // todo. $builder 是什么?
         static::addGlobalScope('replyCount', function ($builder) {
             $builder->withCount('replies');
         });
 
+        // todo. 这个是什么?
         static::deleting(function ($thread) {
+            /** @var \App\Thread $thread */
             $thread->replies()->delete();
         });
     }
