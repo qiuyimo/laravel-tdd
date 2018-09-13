@@ -13,6 +13,7 @@ use Faker\Generator as Faker;
 |
 */
 
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
@@ -22,6 +23,7 @@ $factory->define(App\User::class, function (Faker $faker) {
     ];
 });
 
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Thread::class, function (Faker $faker) {
     return [
         'user_id' => function () {
@@ -36,6 +38,7 @@ $factory->define(App\Thread::class, function (Faker $faker) {
     ];
 });
 
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Reply::class, function (Faker $faker) {
     return [
         'thread_id' => function () {
@@ -48,6 +51,7 @@ $factory->define(App\Reply::class, function (Faker $faker) {
     ];
 });
 
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\Channel::class, function ($faker) {
     $name = $faker->word;
 
