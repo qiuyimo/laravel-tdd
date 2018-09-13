@@ -15,8 +15,13 @@ class FavoritesController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * @param Reply $reply
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Reply $reply)
     {
-        return $reply->favorite();
+        $reply->favorite();
+        return back();
     }
 }
