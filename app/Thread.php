@@ -34,6 +34,8 @@ class Thread extends Model
      */
     protected $guarded = [];
 
+    protected $with = ['creator'];
+
     protected static function boot()
     {
         parent::boot();
