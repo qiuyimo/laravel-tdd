@@ -128,11 +128,13 @@ class ThreadsController extends Controller
      *
      * @param $channel
      * @param Thread $thread
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Symfony\Component\HttpFoundation\Response
      * @throws \Exception
      */
     public function destroy($channel, Thread $thread)
     {
+        $this->authorize('update', $thread);
+
         $thread->delete();
         if (request()->wantsJson()) {
             return response('', 204);
