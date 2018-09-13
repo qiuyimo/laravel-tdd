@@ -13,4 +13,4 @@ install:
   - composer install --prefer-dist --quiet
   - php artisan key:generate
 
-script: phpunit -c phpunit.xml --coverage-text
+script: vendor/bin/phpunit -c phpunit.xml --coverage-text
