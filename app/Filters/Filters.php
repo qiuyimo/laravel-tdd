@@ -8,6 +8,10 @@ abstract class Filters
 {
 
     protected $request;
+
+    /**
+     * @var \Illuminate\Database\Eloquent\Builder $builder
+     */
     protected $builder;
 
     protected $filters = [];

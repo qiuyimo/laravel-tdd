@@ -40,7 +40,7 @@ class ThreadsController extends Controller
      */
     protected function getThreads(Channel $channel, ThreadsFilters $filters)
     {
-        /** @var  $threads \App\Thread */
+        /** @var \App\Thread $threads */
         $threads = Thread::query()->with('channel')->latest()->filter($filters);
 
         if ($channel->exists) {

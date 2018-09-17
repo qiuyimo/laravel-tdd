@@ -7,6 +7,8 @@
 * https://oomusou.io/refactor/refactor-in-action
 * https://laravel-china.org/docs/forum-in-laravel-tdd
 
+[TOC]
+
 
 
 ## 第一节 Initial Database Setup With Seeding
@@ -211,10 +213,6 @@ class ThreadsTest extends TestCase
 **A:** 暂时不知道.
 
 ## 第三节 A Thread Can Have Replies
-
-### new kill
-
-- Carbon 的使用
 
 ### 功能测试可以先写伪代码
 

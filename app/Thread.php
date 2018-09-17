@@ -42,12 +42,10 @@ class Thread extends Model
     {
         parent::boot();
 
-        // todo. $builder 是什么?
         static::addGlobalScope('replyCount', function ($builder) {
             $builder->withCount('replies');
         });
 
-        // todo. 这个是什么?
         static::deleting(function ($thread) {
             /** @var \App\Thread $thread */
             $thread->replies()->delete();
@@ -97,7 +95,7 @@ class Thread extends Model
 
     /**
      * @param $query
-     * @param $filters
+     * @param $filters \App\Filters\ThreadsFilters
      * @return mixed
      */
     public function scopeFilter($query, $filters)
