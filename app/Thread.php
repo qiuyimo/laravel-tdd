@@ -48,7 +48,7 @@ class Thread extends Model
 
         static::deleting(function ($thread) {
             /** @var \App\Thread $thread */
-            $thread->replies()->delete();
+            $thread->replies->each->delete();
         });
     }
 

@@ -12,5 +12,6 @@ class ReplySeeder extends Seeder
     public function run()
     {
         factory('App\Reply', 50)->create();
+        factory('App\Channel', 8)->create();
     }
 }
