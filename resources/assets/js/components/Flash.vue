@@ -10,8 +10,8 @@
 
         data(){
             return {
-                body : '',
-                show:false
+                body: '',
+                show: false
             }
         },
 
