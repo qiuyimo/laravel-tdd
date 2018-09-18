@@ -41,7 +41,7 @@ class RepliesController extends Controller
      *
      * @param $channelId
      * @param Thread $thread
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store($channelId, Thread $thread)
     {
@@ -53,6 +53,8 @@ class RepliesController extends Controller
             'body' => request('body'),
             'user_id' => auth()->id()
         ]);
+
+        return back()->with('flash', 'Your reply has been left.');
     }
 
     /**
